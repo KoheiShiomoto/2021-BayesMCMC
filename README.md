@@ -172,7 +172,7 @@ co-authored by Kohei Shiomoto, Tatsuya Otoshi, and Masayuki Murata.
  python3 plotInputAndResults.py  -s 2013-11-01 -e 2013-12-31  --ymaxTraffic 4000.0 --ymaxPopulation 10000 -od output -Xi xiData_internet_1104_1110 -pT trafficData_internet_1104_1110_cell -pP popData_internet_1104_1110_cell -pI info_internet_Multi8020_1104_1110_cell -pR result_MltSgl2_1104_1110_cell --cellIdList 04259 04456 05060 05200
  ```
 
- # Compare Single class (class #1) and Single class (class #2) is assumed in Bayesian inference
+ ### Compare Single class (class #1) and Single class (class #2) is assumed in Bayesian inference
  You can also make the graphs from the multiple areas. For example, 04259, 04456, 05060, and 05200.
  ```
  python3 plotInputAndResults.py   --cellIdList 04259 04456 05060 05200 -s 2013-11-01 -e 2013-12-31  --ymaxTraffic 4000.0 --ymaxPopulation 10000 -od output -Xi xiData_internet_1104_1110 -pT trafficData_internet_1104_1110_cell -pP popData_internet_1104_1110_cell -pI info_internet_Multi8020_1104_1110_cell --switchMultiSingle -pR1 result_MltSgl1_1104_1110_cell -pR2 result_MltSgl2_1104_1110_cell
