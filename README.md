@@ -43,6 +43,7 @@ co-authored by Kohei Shiomoto, Tatsuya Otoshi, and Masayuki Murata.
  The results confirmed that the proposed method provides accurate
  prediction results for both single and multiple traffic classes.  
 
+ ## Dataset creation from Milan Grid
  We create the traffic data from Milano Grid dataset.
  In order to prepare the traffic data from 2013-11-04 to 2013-11-10, you need to do the following:
  ```
@@ -67,10 +68,11 @@ co-authored by Kohei Shiomoto, Tatsuya Otoshi, and Masayuki Murata.
  python3 getAreaData.py -s 2013-11-04 -e 2013-11-10 -ci cell${cellId} -od output -i trafficData_internet_1104_1110.csv -o trafficData_internet_1104_1110_cell${cellId}.csv
  ```
 
- ## For single traffic class simulation
  Then you will creat the input data to run the simulater.
  You should choose to use either original, artificial (single class), artificial (two classes) traffic.
- First, for original traffic.
+
+ ## For the original traffic simulation
+ First, to use the original traffic, you need to prepate the input data to run the simulator by doing the following:
  ```
  python3 calcMGInputDataV2.py --duration 600 --isOriginalTraffic -ci cell${cellId} -od output -i trafficData_internet_1104_1110_cell${cellId}.csv -f popData_internet_1104_1110_cell${cellId}.csv  -iXi xiData_internet_1104_1110.csv -o info_internet_Original_1104_1110_cell${cellId}.csv  --mixRate1 1.0 --uTraffic1 1.0 --uCPU1ave 0.25 --uMEM1ave 0.80 --uCPU1std 0.1 --uMEM1std 0.3
  ```
@@ -87,4 +89,93 @@ co-authored by Kohei Shiomoto, Tatsuya Otoshi, and Masayuki Murata.
  python3 plotInputAndResults.py  -s 2013-11-01 -e 2013-12-31  --ymaxTraffic 4000.0 --ymaxPopulation 10000 -od output -Xi xiData_internet_1104_1110 -pT trafficData_internet_1104_1110_cell -pP popData_internet_1104_1110_cell -pI info_internet_Original_1104_1110_cell -pR result_SglOrg_1104_1110_cell --cellIdList 04259 04456 05060 05200
  ```
 
- ## For two traffic classes simulation
+
+
+
+ ## For an artificla traffic (single class) simulation
+ Second, to use an artificial traffic (single class), you need to prepate the input data to run the simulator by doing the following:
+ ```
+ python3 calcMGInputDataV2.py --duration 600 -c 1 -ci cell${cellId} -od output -i trafficData_internet_1111_1117_cell${cellId}.csv -f popData_internet_1111_1117_cell${cellId}.csv -iXi xiData_internet_1111_1117.csv -o info_internet_Single_1111_1117_cell${cellId}.csv --mixRate1 1.0 --uTraffic1 1.0 --uCPU1ave 0.25 --uMEM1ave 0.80 --uCPU1std 0.1 --uMEM1std 0.3 > /dev/null
+ ```
+
+ You will run the simulater.
+ ```
+ python3 predictBayesModelSingleV2.py --sampleNum 1 -od output -f info_internet_Single_1111_1117_cell${cellId}.csv -o result_SglSgl_1111_1117_cell${cellId}.csv --uTraffic 1.0 --uCPUave 0.25 --uMEMave 0.80 --uCPUstd 0.1 --uMEMstd 0.3 > /dev/null
+ ```
+
+ You can make the graph from the results.
+ ```
+ python3 drawGrphPredictResultSingle.py -od output -pd pic --resultFile result_SglSgl_1111_1117_cell${cellId}.csv --inputFile info_internet_Single_1111_1117_cell${cellId}.csv --pjName SingleSingle1_internet_1111_1117_cell${cellId}
+ ```
+
+ You can also make the graphs from the multiple areas. For example, 04259, 04456, 05060, and 05200.
+ ```
+ python3 plotInputAndResults.py -s 2013-11-01 -e 2013-12-31  --ymaxTraffic 4000.0 --ymaxPopulation 10000 -od output -Xi xiData_internet_1111_1117 -pT trafficData_internet_1111_1117_cell -pP popData_internet_1111_1117_cell -pI info_internet_Single_1111_1117_cell -pR result_SglSgl_1111_1117_cell --cellIdList 04259 04456 05060 05200
+ ```
+
+
+
+
+ ## For an artificla traffic (two classes) simulation
+ Second, to use an artificial traffic (two class), you need to prepate the input data to run the simulator by doing the following:
+ ```
+ python3 calcMGInputDataV2.py --duration 600  -ci cell${cellId} -od output -i trafficData_internet_1104_1110_cell${cellId}.csv -f popData_internet_1104_1110_cell${cellId}.csv -iXi xiData_internet_1104_1110.csv -o info_internet_Multi8020_1104_1110_cell${cellId}.csv --mixRate1 0.8 --mixRate2 0.2 --uTraffic1 1.0 --uTraffic2 4.0 --uCPU1ave 0.25 --uCPU2ave 0.25 --uMEM1ave 0.80 --uMEM2ave 0.80 --uCPU1std 0.1 --uCPU2std 0.1 --uMEM1std 0.3 --uMEM2std 0.3 
+ ```
+
+ ### Two classes are assumed in Bayesian inference
+ You will run the simulater.
+ ```
+ python3 predictBayesModelMultiV2.py --sampleNum 1 -od output -f info_internet_Multi8020_1104_1110_cell${cellId}.csv -o result_MltMlt_1104_1110_cell${cellId}.csv --uTraffic1 1.0 --uTraffic2 4.0 --uCPU1ave 0.25 --uCPU2ave 0.25 --uMEM1ave 0.80 --uMEM2ave 0.80 --uCPU1std 0.1 --uCPU2std 0.1 --uMEM1std 0.3 --uMEM2std 0.3  > /dev/null
+ ```
+
+ You can make the graph from the results.
+ ```
+ python3 drawGrphPredictResultMulti.py -od output -pd pic --resultFile result_MltMlt_1104_1110_cell${cellId}.csv --inputFile info_internet_Multi8020_1104_1110_cell${cellId}.csv --pjName MltMlt_1104_1110_cell${cellId}
+ ```
+
+ You can also make the graphs from the multiple areas. For example, 04259, 04456, 05060, and 05200.
+ ```
+ python3 plotInputAndResults.py --didMultiPrediction -s 2013-11-01 -e 2013-12-31  --ymaxTraffic 4000.0 --ymaxPopulation 10000 -od output -rXi1 0.8 -rXi2 0.2 -Xi xiData_internet_1104_1110 -pT trafficData_internet_1104_1110_cell -pP popData_internet_1104_1110_cell -pI info_internet_Multi8020_1104_1110_cell -pR result_MltMlt_1104_1110_cell --cellIdList 04259 04456 05060 05200
+ ```
+
+
+
+
+ ### Singl classe (class #1) is assumed in Bayesian inference
+ You will run the simulater.
+ ```
+ python3 predictBayesModelSingleV2.py --sampleNum 1 -od output -f info_internet_Multi8020_1104_1110_cell${cellId}.csv -o result_MltSgl1_1104_1110_cell${cellId}.csv --uTraffic 1.0 --uCPUave 0.25 --uMEMave 0.80 --uCPUstd 0.1 --uMEMstd 0.3 > /dev/null
+ ```
+
+ You can make the graph from the results.
+ ```
+ python3 drawGrphPredictResultSingle.py -od output -pd pic --resultFile result_MltSgl1_1104_1110_cell${cellId}.csv --inputFile info_internet_Multi8020_1104_1110_cell${cellId}.csv --pjName Multi8020Single1_internet_1104_1110_cell${cellId}
+ ```
+
+ You can also make the graphs from the multiple areas. For example, 04259, 04456, 05060, and 05200.
+ ```
+ python3 plotInputAndResults.py  -s 2013-11-01 -e 2013-12-31  --ymaxTraffic 4000.0 --ymaxPopulation 10000 -od output -Xi xiData_internet_1104_1110 -pT trafficData_internet_1104_1110_cell -pP popData_internet_1104_1110_cell -pI info_internet_Multi8020_1104_1110_cell -pR result_MltSgl1_1104_1110_cell --cellIdList 04259 04456 05060 05200
+ ```
+ 
+ ### Singl classe (class #2) is assumed in Bayesian inference
+ You will run the simulater.
+ ```
+ python3 predictBayesModelSingleV2.py --sampleNum 1 -od output -f info_internet_Multi8020_1104_1110_cell${cellId}.csv -o result_MltSgl2_1104_1110_cell${cellId}.csv --uTraffic 4.0 --uCPUave 0.25 --uMEMave 0.80 --uCPUstd 0.1 --uMEMstd 0.3 > /dev/null
+ ```
+
+ You can make the graph from the results.
+ ```
+ python3 drawGrphPredictResultSingle.py -od output -pd pic --resultFile result_MltSgl2_1104_1110_cell${cellId}.csv --inputFile info_internet_Multi8020_1104_1110_cell${cellId}.csv --pjName Multi8020Single2_internet_1104_1110_cell${cellId}
+ ```
+
+ You can also make the graphs from the multiple areas. For example, 04259, 04456, 05060, and 05200.
+ ```
+ python3 plotInputAndResults.py  -s 2013-11-01 -e 2013-12-31  --ymaxTraffic 4000.0 --ymaxPopulation 10000 -od output -Xi xiData_internet_1104_1110 -pT trafficData_internet_1104_1110_cell -pP popData_internet_1104_1110_cell -pI info_internet_Multi8020_1104_1110_cell -pR result_MltSgl2_1104_1110_cell --cellIdList 04259 04456 05060 05200
+ ```
+
+ ## Compare Singl classe (class #1) and Singl classe (class #2) is assumed in Bayesian inference
+ You can also make the graphs from the multiple areas. For example, 04259, 04456, 05060, and 05200.
+ ```
+ python3 plotInputAndResults.py   --cellIdList 04259 04456 05060 05200 -s 2013-11-01 -e 2013-12-31  --ymaxTraffic 4000.0 --ymaxPopulation 10000 -od output -Xi xiData_internet_1104_1110 -pT trafficData_internet_1104_1110_cell -pP popData_internet_1104_1110_cell -pI info_internet_Multi8020_1104_1110_cell --switchMultiSingle -pR1 result_MltSgl1_1104_1110_cell -pR2 result_MltSgl2_1104_1110_cell
+ ```
+
